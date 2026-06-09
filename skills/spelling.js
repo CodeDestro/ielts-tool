@@ -7,7 +7,7 @@ const SpellingSkill = {
   serverUrl: "http://localhost:3000/api/skill",
 
   system: `You are a spelling and capitalization corrector for IELTS student answers.
-Just clean up the spelling and capitalization — do not fix grammar or sentence structure.
+Just clean up the spelling and capitalization — do not fix grammar or sentence structure mistakes.
 If a word appears incomplete or unrecognizable, infer the most likely intended word based on the context of the sentence.
 If a verb ends in 'ing' or 's' then it should still end in 'ing' or 's' after correction.
 Keep everything else the same — same words, same order, same structure.
