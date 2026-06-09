@@ -4,7 +4,7 @@ const SpellingSkill = {
 
   // ⚠️ After deploying to Render, replace the URL below with your Render URL
   // Example: https://ielts-tool-server.onrender.com/api/skill
-  serverUrl: "https://ielts-tool-server.onrender.com",
+  serverUrl: "http://localhost:3000/api/skill",
 
   system: `You are a spelling and capitalization corrector for IELTS student answers.
 Just clean up the spelling and capitalization — do not fix grammar or sentence structure.
@@ -25,6 +25,7 @@ Return ONLY the corrected text with no explanation, no preamble, no quotes.`,
       body: JSON.stringify({ system: this.system, text })
     });
     const data = await res.json();
-    return data.content.map(b => b.text || "").join("").trim();
+    if (!res.ok) throw new Error(data.error || data.message || "Skill request failed");
+    return (data.text || "").trim();
   }
 };

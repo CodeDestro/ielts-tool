@@ -158,7 +158,9 @@ async function runSkill(skill) {
   try {
     ta.value = await skill.run(original) || original;
   } catch(err) {
+    console.error('Skill error:', err);
     ta.value = original;
+    alert(`Skill failed: ${err.message || err}`);
   }
   ta.disabled = false;
 }
