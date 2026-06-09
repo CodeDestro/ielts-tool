@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IELTS Speaking Examiner Tool</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+
+<!-- Load data and skills -->
+<script src="data/questions.js"></script>
+<script src="skills/spelling.js"></script>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#f5f5f3;color:#1a1a1a;min-height:100vh}
+nav{background:#fff;border-bottom:0.5px solid #ddd;padding:0 2rem;display:flex;align-items:center;gap:2rem;height:52px;position:sticky;top:0;z-index:10}
+.nav-logo{font-weight:600;font-size:15px;color:#1a1a1a;letter-spacing:-0.3px}
+.nav-item{font-size:14px;padding:6px 12px;border-radius:6px;cursor:pointer;color:#555;transition:all .15s}
+.nav-item.active{background:#f0f0ee;color:#1a1a1a;font-weight:500}
+main{max-width:860px;margin:2rem auto;padding:0 1.5rem}
+.card{background:#fff;border:0.5px solid #e0e0de;border-radius:12px;padding:1.5rem;margin-bottom:1.5rem}
+.selectors{display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap}
+.select-group{display:flex;flex-direction:column;gap:6px;flex:1;min-width:180px}
+.select-group label{font-size:12px;font-weight:500;color:#888;text-transform:uppercase;letter-spacing:.5px}
+select{width:100%;padding:8px 12px;border:0.5px solid #ccc;border-radius:8px;font-size:14px;background:#fff;cursor:pointer;color:#1a1a1a}
+select:disabled{color:#bbb;cursor:not-allowed;background:#fafaf9}
+.part-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:500;margin-bottom:.75rem}
+.badge-p1{background:#e8f0fe;color:#1a56b0}
+.badge-p2{background:#fef3e2;color:#b45309}
+.badge-p3{background:#e8faf0;color:#166534}
+.question-box{background:#f9f9f7;border:0.5px solid #e0e0de;border-radius:10px;padding:1.25rem 1.5rem;margin:1rem 0}
+.question-text{font-size:17px;font-weight:500;line-height:1.5;color:#1a1a1a}
+.cue-card{background:#fffdf0;border:0.5px solid #e8d88a;border-radius:10px;padding:1.25rem 1.5rem;margin:1rem 0}
+.cue-title{font-size:15px;font-weight:600;margin-bottom:.75rem;color:#1a1a1a}
+.cue-say{font-size:13px;color:#666;margin-bottom:.5rem}
+.cue-points{list-style:none;padding:0}
+.cue-points li{font-size:14px;padding:3px 0 3px 1rem;color:#333;position:relative}
+.cue-points li::before{content:"•";position:absolute;left:0;color:#b45309}
+.nav-controls{display:flex;align-items:center;gap:.75rem;margin-top:.5rem}
+.q-counter{font-size:13px;color:#888;min-width:60px;text-align:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:7px 16px;border:0.5px solid #ccc;border-radius:8px;font-size:13px;background:#fff;cursor:pointer;color:#333;transition:all .15s;font-weight:500}
+.btn:hover{background:#f5f5f3;border-color:#aaa}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-icon{padding:7px 10px}
+textarea{width:100%;padding:12px;border:0.5px solid #ccc;border-radius:8px;font-size:14px;font-family:inherit;resize:vertical;line-height:1.6;color:#1a1a1a;background:#fff;min-height:120px}
+textarea:focus{outline:none;border-color:#1a56b0}
+.timers{display:flex;gap:1rem;flex-wrap:wrap;margin:1rem 0}
+.timer-card{flex:1;min-width:160px;background:#f9f9f7;border:0.5px solid #e0e0de;border-radius:10px;padding:1rem 1.25rem;text-align:center}
+.timer-label{font-size:12px;color:#888;margin-bottom:.5rem;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+.timer-display{font-size:32px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-1px;margin-bottom:.75rem}
+.timer-prep .timer-display{color:#b45309}
+.timer-speak .timer-display{color:#166534}
+.timer-controls{display:flex;gap:.5rem;justify-content:center}
+.btn-sm{padding:5px 12px;font-size:12px}
+.timer-done .timer-display{color:#888}
+.section-label{font-size:12px;font-weight:500;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.5rem}
+.instructions-box{background:#f0f4ff;border:0.5px solid #c0d0f0;border-radius:10px;padding:1rem 1.25rem;margin-top:1rem}
+.instructions-title{font-size:13px;font-weight:600;color:#1a56b0;margin-bottom:.5rem}
+.instructions-text{font-size:13px;color:#334;line-height:1.6}
+.empty-state{text-align:center;padding:3rem;color:#aaa;font-size:15px}
+#ctx-menu{display:none;position:fixed;background:#fff;border:0.5px solid #ddd;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.12);padding:4px 0;min-width:160px;z-index:9999;font-size:13px}
+.ctx-item{padding:7px 16px;cursor:pointer;display:flex;align-items:center;gap:8px;color:#1a1a1a}
+.ctx-item:hover{background:#f5f5f3}
+.ctx-item.ctx-special{color:#1a56b0;font-weight:500}
+.ctx-item i{font-size:15px}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">IELTS Examiner</span>
+  <span class="nav-item active">Questions & Answers</span>
+</nav>
+
+<!-- Context menu -->
+<div id="ctx-menu">
+  <div class="ctx-item" onclick="ctxCut()"><i class="ti ti-cut" aria-hidden="true"></i> Cut</div>
+  <div class="ctx-item" onclick="ctxCopy()"><i class="ti ti-copy" aria-hidden="true"></i> Copy</div>
+  <div class="ctx-item" onclick="ctxPaste()"><i class="ti ti-clipboard" aria-hidden="true"></i> Paste</div>
+  <div class="ctx-item" onclick="ctxSelectAll()"><i class="ti ti-select-all" aria-hidden="true"></i> Select all</div>
+  <div style="border-top:0.5px solid #eee;margin:4px 0"></div>
+  <!-- Skills are injected here by JS -->
+</div>
+
+<main>
+  <div class="card">
+    <div class="selectors">
+      <div class="select-group">
+        <label for="part-select">Part</label>
+        <select id="part-select" onchange="onPartChange()">
+          <option value="">— Select a part —</option>
+          <option value="1">Part 1</option>
+          <option value="2">Part 2</option>
+          <option value="3">Part 3</option>
+        </select>
+      </div>
+      <div class="select-group">
+        <label for="topic-select">Topic</label>
+        <select id="topic-select" onchange="onTopicChange()" disabled>
+          <option value="">— Select a topic —</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div id="content-area">
+    <div class="card empty-state">
+      <i class="ti ti-book-open" style="font-size:32px;display:block;margin-bottom:.5rem;color:#ccc" aria-hidden="true"></i>
+      Select a part above to get started
+    </div>
+  </div>
+</main>
+
+<script>
+// ── Register all skills here ──────────────────────────────────────────
+// To add a new skill, just import its file above and add it to this array.
+const skills = [
+  SpellingSkill,
+  // GrammarSkill,
+  // VocabularySkill,
+];
+
+// ── Inject skill items into context menu ─────────────────────────────
+const menu = document.getElementById('ctx-menu');
+skills.forEach(skill => {
+  const div = document.createElement('div');
+  div.className = 'ctx-item ctx-special';
+  div.innerHTML = `<i class="ti ${skill.icon}" aria-hidden="true"></i> ${skill.label}`;
+  div.onclick = () => runSkill(skill);
+  menu.appendChild(div);
+});
+
+// ── Context menu logic ────────────────────────────────────────────────
+document.addEventListener('click', hideMenu);
+document.addEventListener('keydown', e => { if(e.key==='Escape') hideMenu(); });
+
+function showMenu(e) {
+  e.preventDefault();
+  const m = document.getElementById('ctx-menu');
+  m.style.display = 'block';
+  m.style.left = Math.min(e.clientX, window.innerWidth - 180) + 'px';
+  m.style.top  = Math.min(e.clientY, window.innerHeight - 200) + 'px';
+}
+function hideMenu() { document.getElementById('ctx-menu').style.display = 'none'; }
+function getTA() { return document.getElementById('student-answer'); }
+function ctxCut() { const ta=getTA(); if(!ta)return; const s=ta.selectionStart,e=ta.selectionEnd; if(s!==e){navigator.clipboard.writeText(ta.value.slice(s,e));ta.setRangeText('',s,e,'end');} hideMenu(); }
+function ctxCopy() { const ta=getTA(); if(!ta)return; const s=ta.selectionStart,e=ta.selectionEnd; navigator.clipboard.writeText(s!==e?ta.value.slice(s,e):ta.value); hideMenu(); }
+async function ctxPaste() { const ta=getTA(); if(!ta)return; try{ const t=await navigator.clipboard.readText(); ta.setRangeText(t,ta.selectionStart,ta.selectionEnd,'end'); }catch(err){} hideMenu(); }
+function ctxSelectAll() { const ta=getTA(); if(!ta)return; ta.focus(); ta.select(); hideMenu(); }
+
+async function runSkill(skill) {
+  hideMenu();
+  const ta = getTA();
+  if (!ta || !ta.value.trim()) return;
+  const original = ta.value;
+  ta.disabled = true;
+  ta.value = `Running ${skill.label}...`;
+  try {
+    ta.value = await skill.run(original) || original;
+  } catch(err) {
+    ta.value = original;
+  }
+  ta.disabled = false;
+}
+
+// ── App logic ─────────────────────────────────────────────────────────
+const instructions = {
+  1:"Keep answers short and to the point — 2 to 3 sentences maximum. Give a direct answer, add one brief reason or example, then stop.",
+  2:"Speak for the full 2 minutes. Cover all the cue card bullet points. Use connectors like 'First of all...', 'In addition...', 'To conclude...' to organise your answer.",
+  3:"Aim for 5 to 6 sentences. Give your opinion, support it with a reason, and add an example or contrast. Use more complex vocabulary and sentence structures."
+};
+
+let current = null, qIndex = 0;
+let prepTimer = null, speakTimer = null;
+let prepSecs = 60, speakSecs = 120;
+let prepRunning = false, speakRunning = false;
+
+function onPartChange() {
+  const part = document.getElementById('part-select').value;
+  const topicSel = document.getElementById('topic-select');
+  topicSel.innerHTML = '<option value="">— Select a topic —</option>';
+  current = null; qIndex = 0;
+  clearAllTimers();
+  if (!part) { topicSel.disabled = true; showEmpty('Select a part above to get started'); return; }
+  topicSel.disabled = false;
+  topics[part].forEach(t => {
+    const opt = document.createElement('option');
+    opt.value = t.id; opt.textContent = t.label;
+    topicSel.appendChild(opt);
+  });
+  showEmpty('Now select a topic to begin');
+}
+
+function onTopicChange() {
+  const part = parseInt(document.getElementById('part-select').value);
+  const topicId = document.getElementById('topic-select').value;
+  clearAllTimers();
+  if (!topicId) { showEmpty('Now select a topic to begin'); return; }
+  current = { ...topics[part].find(t => t.id === topicId), part };
+  qIndex = 0;
+  render();
+}
+
+function showEmpty(msg) {
+  document.getElementById('content-area').innerHTML = `<div class="card empty-state"><i class="ti ti-book-open" style="font-size:32px;display:block;margin-bottom:.5rem;color:#ccc" aria-hidden="true"></i>${msg}</div>`;
+}
+
+function render() {
+  if (!current) return;
+  const p = current.part;
+  const badgeClass = p===1?'badge-p1':p===2?'badge-p2':'badge-p3';
+  let html = `<div class="card"><span class="part-badge ${badgeClass}">Part ${p}</span><div style="font-size:18px;font-weight:500;margin-bottom:1rem">${current.label}</div>`;
+
+  if (p === 2) {
+    html += `<div class="cue-card"><div class="cue-title">${current.prompt}</div><div class="cue-say">You should say:</div><ul class="cue-points">${current.points.map(pt=>`<li>${pt}</li>`).join('')}</ul></div>
+    <div class="timers">
+      <div class="timer-card timer-prep" id="timer-prep-card">
+        <div class="timer-label">Prep time</div>
+        <div class="timer-display" id="prep-display">1:00</div>
+        <div class="timer-controls">
+          <button class="btn btn-sm" id="prep-start-btn" onclick="startPrep()"><i class="ti ti-player-play" aria-hidden="true"></i> Start</button>
+          <button class="btn btn-sm" onclick="resetPrep()"><i class="ti ti-refresh" aria-hidden="true"></i></button>
+        </div>
+      </div>
+      <div class="timer-card timer-speak" id="timer-speak-card">
+        <div class="timer-label">Speaking time</div>
+        <div class="timer-display" id="speak-display">2:00</div>
+        <div class="timer-controls">
+          <button class="btn btn-sm" id="speak-start-btn" onclick="startSpeak()"><i class="ti ti-player-play" aria-hidden="true"></i> Start</button>
+          <button class="btn btn-sm" onclick="resetSpeak()"><i class="ti ti-refresh" aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>`;
+  } else {
+    const qs = current.questions;
+    html += `<div class="question-box"><div class="question-text">${qs[qIndex]}</div></div>
+    <div class="nav-controls">
+      <button class="btn btn-icon" onclick="prevQ()" ${qIndex===0?'disabled':''} aria-label="Previous"><i class="ti ti-arrow-left" aria-hidden="true"></i></button>
+      <span class="q-counter">${qIndex+1} / ${qs.length}</span>
+      <button class="btn btn-icon" onclick="nextQ()" ${qIndex===qs.length-1?'disabled':''} aria-label="Next"><i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+    </div>`;
+  }
+
+  html += `</div><div class="card"><div class="section-label">Student's answer</div>
+    <textarea id="student-answer" placeholder="Type the student's answer here..." oncontextmenu="showMenu(event)"></textarea>
+    <div class="instructions-box" style="margin-top:1rem">
+      <div class="instructions-title"><i class="ti ti-info-circle" style="font-size:15px;vertical-align:-2px;margin-right:4px" aria-hidden="true"></i>Part ${p} coaching reminder</div>
+      <div class="instructions-text">${instructions[p]}</div>
+    </div></div>`;
+
+  document.getElementById('content-area').innerHTML = html;
+}
+
+function prevQ(){ if(qIndex>0){qIndex--;render();} }
+function nextQ(){ if(current&&qIndex<current.questions.length-1){qIndex++;render();} }
+function fmtTime(s){ return Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60; }
+function clearAllTimers(){ clearInterval(prepTimer);clearInterval(speakTimer);prepRunning=false;speakRunning=false;prepSecs=60;speakSecs=120; }
+
+function startPrep(){
+  if(prepRunning)return; prepRunning=true;
+  const btn=document.getElementById('prep-start-btn');
+  btn.innerHTML='<i class="ti ti-player-pause" aria-hidden="true"></i> Pause'; btn.onclick=pausePrep;
+  prepTimer=setInterval(()=>{ prepSecs--; document.getElementById('prep-display').textContent=fmtTime(prepSecs);
+    if(prepSecs<=0){ clearInterval(prepTimer);prepRunning=false; document.getElementById('prep-display').textContent='0:00'; document.getElementById('timer-prep-card').classList.add('timer-done'); document.getElementById('prep-start-btn').innerHTML='<i class="ti ti-check" aria-hidden="true"></i> Done'; }
+  },1000);
+}
+function pausePrep(){ clearInterval(prepTimer);prepRunning=false; const btn=document.getElementById('prep-start-btn'); btn.innerHTML='<i class="ti ti-player-play" aria-hidden="true"></i> Resume'; btn.onclick=startPrep; }
+function resetPrep(){ clearInterval(prepTimer);prepRunning=false;prepSecs=60; const d=document.getElementById('prep-display'); if(d)d.textContent='1:00'; const c=document.getElementById('timer-prep-card'); if(c)c.classList.remove('timer-done'); const b=document.getElementById('prep-start-btn'); if(b){b.innerHTML='<i class="ti ti-player-play" aria-hidden="true"></i> Start';b.onclick=startPrep;} }
+function startSpeak(){
+  if(speakRunning)return; speakRunning=true;
+  const btn=document.getElementById('speak-start-btn');
+  btn.innerHTML='<i class="ti ti-player-pause" aria-hidden="true"></i> Pause'; btn.onclick=pauseSpeak;
+  speakTimer=setInterval(()=>{ speakSecs--; document.getElementById('speak-display').textContent=fmtTime(speakSecs);
+    if(speakSecs<=0){ clearInterval(speakTimer);speakRunning=false; document.getElementById('speak-display').textContent='0:00'; document.getElementById('timer-speak-card').classList.add('timer-done'); document.getElementById('speak-start-btn').innerHTML='<i class="ti ti-check" aria-hidden="true"></i> Done'; }
+  },1000);
+}
+function pauseSpeak(){ clearInterval(speakTimer);speakRunning=false; const btn=document.getElementById('speak-start-btn'); btn.innerHTML='<i class="ti ti-player-play" aria-hidden="true"></i> Resume'; btn.onclick=startSpeak; }
+function resetSpeak(){ clearInterval(speakTimer);speakRunning=false;speakSecs=120; const d=document.getElementById('speak-display'); if(d)d.textContent='2:00'; const c=document.getElementById('timer-speak-card'); if(c)c.classList.remove('timer-done'); const b=document.getElementById('speak-start-btn'); if(b){b.innerHTML='<i class="ti ti-player-play" aria-hidden="true"></i> Start';b.onclick=startSpeak;} }
+</script>
+</body>
+</html>
