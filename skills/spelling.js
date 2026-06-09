@@ -4,10 +4,10 @@ const SpellingSkill = {
 
   // ⚠️ After deploying to Render, replace the URL below with your Render URL
   // Example: https://ielts-tool-server.onrender.com/api/skill
-  serverUrl: "http://localhost:3000/api/skill",
+  serverUrl: "https://your-render-url.onrender.com/api/skill",
 
   system: `You are a spelling and capitalization corrector for IELTS student answers.
-Just clean up the spelling and capitalization — do not fix grammar or sentence structure mistakes.
+Just clean up the spelling and capitalization — do not fix grammar or sentence structure.
 If a word appears incomplete or unrecognizable, infer the most likely intended word based on the context of the sentence.
 If a verb ends in 'ing' or 's' then it should still end in 'ing' or 's' after correction.
 Keep everything else the same — same words, same order, same structure.
@@ -25,7 +25,6 @@ Return ONLY the corrected text with no explanation, no preamble, no quotes.`,
       body: JSON.stringify({ system: this.system, text })
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || data.message || "Skill request failed");
-    return (data.text || "").trim();
+    return data.content.map(b => b.text || "").join("").trim();
   }
 };
