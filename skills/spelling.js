@@ -3,7 +3,7 @@ const SpellingSkill = {
   icon: "ti-spell-check",
 
   // ⚠️ After deploying to Render, replace the URL below with your Render URL
-  // Example: https://ielts-tool-server.onrender.com/api/skill
+  // Example: https://ielts-tool-server.onrender.com/api/skill   // <-- forced redeploy
   serverUrl: "https://ielts-tool-server.onrender.com/api/skill",
 
   system: `You are a spelling and capitalization corrector for IELTS student answers.
