@@ -25,7 +25,12 @@ Return ONLY the corrected text with no explanation, no preamble, no quotes.`,
       body: JSON.stringify({ system: this.system, text })
     });
     const data = await res.json();
-    return data.content.map(b => b.text || "").join("").trim();
+    if (!data.content || !Array.isArray(data.content)) {
+  // Anthropic returned an error; surface it so the UI can show a message
+  if (data.error && data.error.message) return data.error.message;
+  return "";
+}
+return data.content.map(b => b.text || "").join("").trim();
   }
 };
 
